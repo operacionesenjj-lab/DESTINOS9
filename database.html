@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Base de Datos - Enrutador</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: linear-gradient(135deg, #2c3e50 0%, #3498db 50%, #5dade2 100%);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: white;
+        }
+
+        .header {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            max-width: 800px;
+        }
+
+        .back-button {
+            padding: 0.8rem 1.5rem;
+            font-size: 1rem;
+            border: 2px solid #ecf0f1;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            backdrop-filter: blur(10px);
+            font-weight: 600;
+        }
+
+        .back-button:hover {
+            background: rgba(236, 240, 241, 0.9);
+            color: #2c3e50;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+        }
+
+        h1 {
+            color: white;
+            font-size: 2.5rem;
+            margin: 0;
+            text-align: center;
+            flex-grow: 1;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            font-weight: 300;
+            letter-spacing: 1px;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            width: 100%;
+            max-width: 800px;
+            justify-content: center;
+        }
+
+        .action-button {
+            padding: 1rem 2rem;
+            font-size: 1rem;
+            border: 2px solid #ecf0f1;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            flex: 1;
+            min-width: 200px;
+            text-transform: uppercase;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            font-weight: 600;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .action-button:hover {
+            background: rgba(236, 240, 241, 0.9);
+            color: #2c3e50;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+        }
+
+        .routes-container {
+            width: 100%;
+            max-width: 800px;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-top: 1rem;
+            min-height: 300px;
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+        }
+
+        .route-item {
+            display: flex;
+            flex-direction: column;
+            padding: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+            background: rgba(255, 255, 255, 0.05);
+            transition: all 0.3s ease;
+        }
+
+        .route-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateX(5px);
+        }
+
+        .route-item:last-child {
+            border-bottom: none;
+        }
+
+        .route-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            padding-bottom: 0.5rem;
+        }
+
+        .route-name {
+            font-weight: 600;
+            font-size: 1.2rem;
+            color: #ecf0f1;
+        }
+
+        .route-content {
+            padding: 1rem 0;
+            display: none;
+            border-top: 1px dashed rgba(255, 255, 255, 0.3);
+            margin-top: 0.5rem;
+            white-space: pre-wrap;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 6px;
+            padding: 1rem;
+            color: #bdc3c7;
+        }
+
+        .route-checkbox {
+            margin-right: 15px;
+            width: 18px;
+            height: 18px;
+            accent-color: #3498db;
+        }
+
+        .route-text {
+            flex-grow: 1;
+            word-break: break-word;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, #ecf0f1 0%, #bdc3c7 100%);
+            color: #2c3e50;
+            padding: 2.5rem;
+            border-radius: 16px;
+            width: 80%;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-title {
+            font-size: 1.8rem;
+            margin: 0;
+            color: #2c3e50;
+            font-weight: 300;
+        }
+
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 2rem;
+            cursor: pointer;
+            color: #7f8c8d;
+            transition: color 0.3s ease;
+        }
+
+        .close-modal:hover {
+            color: #e74c3c;
+        }
+
+        .route-editor {
+            width: 100%;
+            min-height: 200px;
+            padding: 1rem;
+            border: 2px solid #bdc3c7;
+            border-radius: 8px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin-bottom: 1.5rem;
+            resize: vertical;
+            background: white;
+            color: #2c3e50;
+            font-size: 14px;
+        }
+
+        .route-editor:focus {
+            border-color: #3498db;
+            outline: none;
+            box-shadow: 0 0 10px rgba(52, 152, 219, 0.3);
+        }
+
+        .save-route {
+            padding: 1rem 2rem;
+            font-size: 1rem;
+            border: none;
+            border-radius: 8px;
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            font-weight: 600;
+            box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3);
+        }
+
+        .save-route:hover {
+            background: linear-gradient(135deg, #2980b9, #21618c);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(52, 152, 219, 0.4);
+        }
+
+        .no-routes {
+            text-align: center;
+            padding: 3rem;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 1.2rem;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid #bdc3c7;
+            border-radius: 8px;
+            font-size: 16px;
+            background: white;
+            color: #2c3e50;
+            margin-bottom: 1rem;
+        }
+
+        input[type="text"]:focus {
+            border-color: #3498db;
+            outline: none;
+            box-shadow: 0 0 10px rgba(52, 152, 219, 0.3);
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 15px;
+            }
+
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+
+            h1 {
+                font-size: 2rem;
+                margin: 0;
+                text-align: left;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+                width: 100%;
+            }
+
+            .action-button {
+                min-width: 100%;
+                margin-bottom: 0.8rem;
+            }
+
+            .modal-content {
+                width: 95%;
+                padding: 1.5rem;
+            }
+
+            .routes-container {
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <button class="back-button" onclick="goBack()">Volver</button>
+        <h1>Base de Datos</h1>
+    </div>
+
+    <div class="action-buttons">
+        <button class="action-button" onclick="openAddRouteModal()">Agregar Rutas</button>
+        <button class="action-button" onclick="toggleDeleteMode()">Eliminar Rutas</button>
+    </div>
+
+    <div class="routes-container" id="routesContainer">
+        <div class="no-routes" id="noRoutesMessage">No hay rutas disponibles</div>
+        <!-- Las rutas se cargarán dinámicamente aquí -->
+    </div>
+
+    <!-- Modal para agregar rutas -->
+    <div class="modal" id="addRouteModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Agregar Nueva Ruta</h2>
+                <button class="close-modal" onclick="closeModal()">&times;</button>
+            </div>
+            <div>
+                <label for="routeName">Nombre de la ruta:</label>
+                <input type="text" id="routeName" placeholder="Ingrese el nombre de la ruta">
+            </div>
+            <textarea class="route-editor" id="routeEditor" placeholder="Escribe la información de la ruta aquí..."></textarea>
+            <button class="save-route" onclick="saveRoute()">Guardar</button>
+        </div>
+    </div>
+
+    <script>
+        // Variables globales
+        let routes = [];
+        let deleteMode = false;
+
+        // Cargar rutas al iniciar
+        window.onload = function() {
+            loadRoutes();
+        };
+
+        // Función para alternar la visibilidad del contenido de una ruta
+        function toggleRouteContent(index) {
+            if (deleteMode) return; // No expandir si estamos en modo eliminación
+
+            const contentElement = document.getElementById(`route-content-${index}`);
+            if (contentElement.style.display === 'block') {
+                contentElement.style.display = 'none';
+            } else {
+                contentElement.style.display = 'block';
+            }
+        }
+
+        // Función para volver a la página principal
+        function goBack() {
+            window.location.href = 'index.html';
+        }
+
+        // Cargar rutas desde localStorage
+        function loadRoutes() {
+            const savedRoutes = localStorage.getItem('routes');
+            if (savedRoutes) {
+                routes = JSON.parse(savedRoutes);
+                renderRoutes();
+            }
+        }
+
+        // Guardar rutas en localStorage
+        function saveRoutes() {
+            localStorage.setItem('routes', JSON.stringify(routes));
+        }
+
+        // Renderizar las rutas en el contenedor
+        function renderRoutes() {
+            const container = document.getElementById('routesContainer');
+            const noRoutesMessage = document.getElementById('noRoutesMessage');
+
+            // Limpiar el contenedor
+            container.innerHTML = '';
+
+            if (routes.length === 0) {
+                container.appendChild(noRoutesMessage);
+                return;
+            }
+
+            // Crear elementos para cada ruta
+            routes.forEach((route, index) => {
+                const routeItem = document.createElement('div');
+                routeItem.className = 'route-item';
+
+                // Crear el encabezado de la ruta (siempre visible)
+                const routeHeader = document.createElement('div');
+                routeHeader.className = 'route-header';
+                routeHeader.onclick = () => toggleRouteContent(index);
+
+                // Contenedor para checkbox (si está en modo eliminación) y nombre de ruta
+                const headerLeft = document.createElement('div');
+                headerLeft.style.display = 'flex';
+                headerLeft.style.alignItems = 'center';
+
+                if (deleteMode) {
+                    const checkbox = document.createElement('input');
+                    checkbox.type = 'checkbox';
+                    checkbox.className = 'route-checkbox';
+                    checkbox.dataset.index = index;
+                    checkbox.onclick = (e) => e.stopPropagation(); // Evitar que el clic en el checkbox expanda/contraiga
+                    headerLeft.appendChild(checkbox);
+                }
+
+                const routeName = document.createElement('div');
+                routeName.className = 'route-name';
+                routeName.textContent = typeof route === 'object' ? route.name : route;
+                headerLeft.appendChild(routeName);
+
+                routeHeader.appendChild(headerLeft);
+                routeItem.appendChild(routeHeader);
+
+                // Crear el contenido de la ruta (inicialmente oculto)
+                const routeContent = document.createElement('div');
+                routeContent.className = 'route-content';
+                routeContent.id = `route-content-${index}`;
+                routeContent.textContent = typeof route === 'object' ? route.content : '';
+                routeItem.appendChild(routeContent);
+
+                container.appendChild(routeItem);
+            });
+
+            // Agregar botón de eliminar si estamos en modo eliminación
+            if (deleteMode && routes.length > 0) {
+                const deleteButton = document.createElement('button');
+                deleteButton.className = 'action-button';
+                deleteButton.style.marginTop = '1rem';
+                deleteButton.textContent = 'Eliminar Seleccionados';
+                deleteButton.onclick = deleteSelectedRoutes;
+                container.appendChild(deleteButton);
+            }
+        }
+
+        // Abrir modal para agregar ruta
+        function openAddRouteModal() {
+            document.getElementById('routeName').value = '';
+            document.getElementById('routeEditor').value = '';
+            document.getElementById('addRouteModal').style.display = 'flex';
+        }
+
+        // Cerrar modal
+        function closeModal() {
+            document.getElementById('addRouteModal').style.display = 'none';
+        }
+
+        // Guardar nueva ruta
+        function saveRoute() {
+            const routeName = document.getElementById('routeName').value.trim();
+            const routeContent = document.getElementById('routeEditor').value.trim();
+
+            if (!routeName) {
+                alert('Por favor, ingresa un nombre para la ruta.');
+                return;
+            }
+
+            if (!routeContent) {
+                alert('Por favor, ingresa información para la ruta.');
+                return;
+            }
+
+            // Crear objeto de ruta con nombre y contenido
+            const newRoute = {
+                name: routeName,
+                content: routeContent
+            };
+
+            routes.push(newRoute);
+            saveRoutes();
+            renderRoutes();
+            closeModal();
+        }
+
+        // Activar/desactivar modo de eliminación
+        function toggleDeleteMode() {
+            deleteMode = !deleteMode;
+            renderRoutes();
+        }
+
+        // Eliminar rutas seleccionadas
+        function deleteSelectedRoutes() {
+            const checkboxes = document.querySelectorAll('.route-checkbox:checked');
+            const indicesToDelete = Array.from(checkboxes).map(checkbox => parseInt(checkbox.dataset.index));
+
+            // Eliminar desde el índice más alto para no afectar los índices anteriores
+            indicesToDelete.sort((a, b) => b - a).forEach(index => {
+                routes.splice(index, 1);
+            });
+
+            saveRoutes();
+            renderRoutes();
+        }
+
+        // Cerrar modal si se hace clic fuera de él
+        window.onclick = function(event) {
+            const modal = document.getElementById('addRouteModal');
+            if (event.target === modal) {
+                closeModal();
+            }
+        };
+    </script>
+</body>
+</html> 

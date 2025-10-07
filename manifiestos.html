@@ -1,0 +1,1629 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manifiestos - Enrutador</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: linear-gradient(135deg, #2c3e50 0%, #3498db 50%, #5dade2 100%);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: white;
+        }
+        .header {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            max-width: 800px;
+        }
+        .back-button {
+            padding: 0.8rem 1.5rem;
+            font-size: 1rem;
+            border: 2px solid #ecf0f1;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            backdrop-filter: blur(10px);
+            font-weight: 600;
+        }
+        .back-button:hover {
+            background: rgba(236, 240, 241, 0.9);
+            color: #2c3e50;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+        }
+        h1 {
+            color: white;
+            font-size: 2.5rem;
+            margin: 0;
+            text-align: center;
+            flex-grow: 1;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            font-weight: 300;
+            letter-spacing: 1px;
+        }
+        .main-container {
+            width: 100%;
+            max-width: 800px;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 16px;
+            padding: 2rem;
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+        }
+        .upload-section {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding: 2rem;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            border: 2px dashed rgba(255, 255, 255, 0.3);
+            transition: all 0.3s ease;
+        }
+        .upload-section:hover {
+            border-color: rgba(52, 152, 219, 0.5);
+            background: rgba(255, 255, 255, 0.15);
+        }
+        .file-input {
+            display: none;
+        }
+        .upload-button {
+            padding: 1rem 2rem;
+            font-size: 1.1rem;
+            border: 2px solid #ecf0f1;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            font-weight: 600;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            margin: 0.5rem;
+        }
+        .upload-button:hover {
+            background: rgba(236, 240, 241, 0.9);
+            color: #2c3e50;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+        }
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .action-button {
+            padding: 1rem 1.5rem;
+            font-size: 1rem;
+            border: 2px solid #ecf0f1;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            font-weight: 600;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        .action-button:hover {
+            background: rgba(236, 240, 241, 0.9);
+            color: #2c3e50;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+        }
+        .action-button:disabled {
+            background: rgba(189, 195, 199, 0.3);
+            color: rgba(255, 255, 255, 0.5);
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        .qr-section {
+            margin: 2rem 0;
+            padding: 1.5rem;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .video-container {
+            position: relative;
+            margin: 1rem auto;
+            width: 100%;
+            max-width: 400px;
+            background: #2c3e50;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+        }
+        #video {
+            width: 100%;
+            height: auto;
+            border-radius: 10px;
+        }
+        #canvas {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+        }
+        .qr-controls {
+            text-align: center;
+            margin: 1rem 0;
+        }
+        .qr-result {
+            margin: 1rem 0;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 8px;
+            border: 1px solid rgba(0, 0, 0, 0.2);
+            color: #000000;
+            font-weight: 700;
+        }
+        .data-table {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            overflow: hidden;
+            margin: 1rem 0;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .table-header {
+            background: rgba(52, 152, 219, 0.3);
+            padding: 1rem;
+            font-weight: 600;
+            color: #ecf0f1;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .table-content {
+            max-height: 300px;
+            overflow-y: auto;
+            padding: 1rem;
+        }
+        .table-row {
+            padding: 0.8rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            color: #bdc3c7;
+            transition: all 0.3s ease;
+        }
+        .table-row:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateX(5px);
+        }
+        .table-row:last-child {
+            border-bottom: none;
+        }
+        .historial-section {
+            margin-top: 2rem;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 1.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .historial-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        .historial-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #000000;
+        }
+        .historial-item {
+            padding: 1rem;
+            margin: 0.5rem 0;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 8px;
+            border-left: 4px solid #3498db;
+            color: #000000;
+            transition: all 0.3s ease;
+        }
+        .historial-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateX(5px);
+        }
+        .mensaje-error {
+            margin: 1rem 0;
+            padding: 1rem;
+            background: rgba(231, 76, 60, 0.2);
+            color: #ecf0f1;
+            border-radius: 8px;
+            border: 1px solid rgba(231, 76, 60, 0.3);
+            display: none;
+        }
+        .zona-badge {
+            display: inline-block;
+            padding: 0.3rem 0.8rem;
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-right: 8px;
+            box-shadow: 0 2px 8px rgba(52, 152, 219, 0.3);
+        }
+        .carpeta-item {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            margin: 1rem 0;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        .carpeta-item:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+        .carpeta-header {
+            padding: 1.5rem;
+            background: rgba(52, 152, 219, 0.2);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .carpeta-nombre {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #ecf0f1;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .carpeta-contenido {
+            padding: 1.5rem;
+            display: none;
+        }
+        .carpeta-contenido.expandida {
+            display: block;
+        }
+        .carpeta-controls {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            justify-content: center;
+        }
+        .carpeta-manifiestos {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-top: 1rem;
+        }
+        .manifiesto-item {
+            padding: 1rem;
+            margin: 0.5rem 0;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            border-left: 4px solid #3498db;
+            color: #ffffff;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+        }
+        .manifiesto-item:hover {
+            background: rgba(255, 255, 255, 0.15);
+        }
+        .carpeta-checkbox {
+            margin-right: 15px;
+            width: 18px;
+            height: 18px;
+            accent-color: #e74c3c;
+        }
+        .manifiesto-detalle {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-top: 1rem;
+            overflow-x: auto; /* Permitir scroll horizontal en móvil */
+        }
+        .tabla-manifiestos {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            overflow: hidden;
+            min-width: 600px; /* Evita romper columnas en pantallas pequeñas */
+        }
+        .tabla-manifiestos th {
+            background: rgba(255, 255, 255, 0.85);
+            padding: 0.8rem;
+            text-align: left;
+            color: #000000;
+            font-weight: 700;
+            font-size: 1.1rem;
+            border-bottom: 2px solid rgba(0, 0, 0, 0.2);
+        }
+        .tabla-manifiestos td {
+            padding: 0.8rem;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+            color: #000000;
+            font-weight: 700;
+            font-size: 1rem;
+            background: rgba(255,255,255,0.9);
+        }
+        .tabla-manifiestos tr:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+        .cuadros-piezas {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin-top: 0.5rem;
+        }
+        .cuadro-pieza {
+            width: 26px;
+            height: 26px;
+            border: 2px solid rgba(52, 152, 219, 0.8);
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.85rem;
+            line-height: 1;
+            color: #ffffff;
+            background: rgba(52, 152, 219, 0.25);
+            position: relative;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+        .cuadro-pieza:hover {
+            transform: scale(1.1);
+            border-color: rgba(52, 152, 219, 0.8);
+        }
+        .cuadro-pieza.escaneado {
+            background: rgba(46, 204, 113, 0.3);
+            border-color: #2ecc71;
+        }
+        .cuadro-pieza.escaneado::after {
+            content: '✓';
+            position: absolute;
+            font-size: 24px;
+            color: #2ecc71;
+            font-weight: bold;
+        }
+        .btn-revisar-faltantes {
+            margin-top: 1rem;
+            padding: 0.8rem 1.5rem;
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(231, 76, 60, 0.3);
+        }
+        .btn-revisar-faltantes:hover {
+            background: linear-gradient(135deg, #c0392b, #a93226);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(231, 76, 60, 0.4);
+        }
+        .faltantes-section {
+            margin-top: 1rem;
+            background: rgba(0, 0, 0, 0.25);
+            border: 1px dashed rgba(255,255,255,0.3);
+            border-radius: 8px;
+            padding: 1rem;
+        }
+        .faltantes-title {
+            color: #f1c40f;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        .faltantes-item {
+            color: #ffffff;
+            margin: 0.25rem 0;
+        }
+        .qr-scanner-section {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 2rem 0;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .qr-scanner-title {
+            color: #ecf0f1;
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.5rem;
+            }
+            h1 {
+                font-size: 1.8rem;
+                text-align: left;
+            }
+            .main-container {
+                padding: 0.8rem;
+                max-width: 100%;
+            }
+            .action-buttons {
+                flex-direction: column;
+            }
+            .action-button {
+                width: 100%;
+                padding: 0.8rem 1rem;
+                font-size: 0.9rem;
+            }
+            .upload-section {
+                padding: 1rem;
+            }
+            .video-container {
+                max-width: 100%; /* Video a todo el ancho en móvil */
+            }
+            .cuadro-pieza {
+                width: 22px;
+                height: 22px;
+                font-size: 0.75rem;
+            }
+            .cuadros-piezas {
+                gap: 0.25rem;
+            }
+            .tabla-manifiestos {
+                min-width: 100%; /* Tabla responsive */
+                font-size: 0.85rem;
+            }
+            .carpeta-item {
+                margin: 0.5rem 0;
+            }
+            .carpeta-header {
+                padding: 1rem;
+            }
+            .carpeta-contenido {
+                padding: 0.8rem;
+            }
+            .manifiesto-detalle {
+                padding: 0.8rem;
+            }
+        }
+
+        @media (max-width: 420px) {
+            body {
+                padding: 5px;
+            }
+            .main-container {
+                padding: 0.5rem;
+            }
+            h1 {
+                font-size: 1.5rem;
+            }
+            .cuadro-pieza {
+                width: 18px;
+                height: 18px;
+                font-size: 0.7rem;
+            }
+            .cuadros-piezas {
+                gap: 0.2rem;
+            }
+            .carpeta-nombre {
+                font-size: 1rem;
+            }
+            .tabla-manifiestos th, .tabla-manifiestos td {
+                padding: 0.5rem;
+                font-size: 0.85rem;
+            }
+            .qr-result {
+                font-size: 0.9rem;
+                padding: 0.8rem;
+            }
+            .action-button {
+                padding: 0.7rem 0.8rem;
+                font-size: 0.85rem;
+            }
+            .carpeta-header {
+                padding: 0.8rem;
+            }
+            .historial-item {
+                padding: 0.8rem;
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
+</head>
+<body>
+    <div class="header">
+        <button class="back-button" onclick="goBack()">Volver</button>
+        <h1>Manifiestos</h1>
+    </div>
+
+    <div class="main-container">
+        <div class="carpetas-section">
+            <h2 style="color: #ecf0f1; text-align: center; margin-bottom: 1.5rem; font-weight: 300;">CARPETAS DE DESTINOS</h2>
+            
+            <div class="carpetas-controls" style="display: flex; gap: 1rem; justify-content: center; margin-bottom: 2rem;">
+                <button id="agregarCarpeta" class="action-button" onclick="agregarCarpeta()">
+                    📁 Agregar Carpeta
+                </button>
+                <button id="eliminarCarpeta" class="action-button" onclick="eliminarCarpeta()" disabled>
+                    🗑️ Eliminar Carpeta
+                </button>
+            </div>
+            
+            <input type="file" id="fileInput" class="file-input" accept=".xlsx,.xls" onchange="handleFileUpload(event)">
+        </div>
+
+        <div class="carpetas-container" id="carpetasContainer">
+            <!-- Las carpetas se mostrarán aquí -->
+        </div>
+
+        <!-- Sección del escáner QR -->
+        <div class="qr-scanner-section" id="qrScannerSection" style="display: none;">
+            <h3 class="qr-scanner-title">📷 Escáner de Códigos QR</h3>
+            <div class="video-container">
+                <video id="video" autoplay muted playsinline></video>
+                <canvas id="canvas"></canvas>
+            </div>
+            <div class="qr-controls">
+                <button id="iniciarCamara" class="action-button" onclick="iniciarCamara()">
+                    📷 Iniciar Cámara
+                </button>
+                <button id="detenerCamara" class="action-button" onclick="detenerCamara()" disabled>
+                    ⏹️ Detener Cámara
+                </button>
+                <button id="toggleFlashlight" class="action-button" onclick="toggleFlashlight()" disabled>
+                    💡 Linterna
+                </button>
+            </div>
+            <div class="qr-result" id="qrResult">Esperando código QR...</div>
+            <div class="historial-section">
+                <div class="historial-header">
+                    <div class="historial-title">Historial de escaneos</div>
+                    <button class="action-button" style="padding: 0.4rem 0.8rem; font-size: 0.85rem;" onclick="limpiarHistorial()">Limpiar</button>
+                </div>
+                <div id="historialList"></div>
+            </div>
+        </div>
+
+        <div class="data-table" id="dataTable" style="display: none;">
+            <div class="table-header">
+                <h3>Manifiestos Cargados</h3>
+            </div>
+            <div class="table-content" id="tableContent">
+                <!-- Los manifiestos se cargarán aquí -->
+            </div>
+        </div>
+
+
+
+        <div id="mensajeErrorQR" class="mensaje-error"></div>
+    </div>
+
+    <script>
+        let carpetas = [];
+        let modoEliminarCarpetas = false;
+        let carpetaActiva = null;
+        let streamQR = null;
+        let procesandoQR = false;
+        let flashlightOn = false;
+        let manifiestosEscaneados = {}; // {manifiesto_id: {pieza_numero: true}}
+        let mostrarTodasPiezas = {}; // key: `${manifiestoId}_${recibo}` => bool
+        let mostrarTodosRegistros = {}; // key: manifiestoId => bool
+        let historial = [];
+        let historialSet = new Set();
+        let ultimoCodigoProcesado = null;
+        let tiempoUltimoProcesamiento = 0;
+
+        function goBack() {
+            window.location.href = 'index.html';
+        }
+
+        // Funciones de localStorage
+        let timeoutGuardar = null;
+        function guardarDatos() {
+            // Debounce para evitar guardar demasiado frecuente
+            if (timeoutGuardar) {
+                clearTimeout(timeoutGuardar);
+            }
+            timeoutGuardar = setTimeout(() => {
+                try {
+                    localStorage.setItem('carpetas_manifiestos', JSON.stringify(carpetas));
+                    console.log('Datos guardados en localStorage');
+                } catch (error) {
+                    console.error('Error guardando datos:', error);
+                    mostrarMensaje('Error al guardar los datos.', 'error');
+                }
+            }, 500);
+        }
+
+        function cargarDatos() {
+            try {
+                const datosGuardados = localStorage.getItem('carpetas_manifiestos');
+                if (datosGuardados) {
+                    carpetas = JSON.parse(datosGuardados);
+                    console.log('Datos cargados desde localStorage:', carpetas);
+                    
+                    // Asegurar que todas las carpetas tengan la propiedad modoEliminar
+                    carpetas.forEach(carpeta => {
+                        if (carpeta.modoEliminar === undefined) {
+                            carpeta.modoEliminar = false;
+                        }
+                    });
+                    
+                    if (carpetas.length > 0) {
+                        document.getElementById('eliminarCarpeta').disabled = false;
+                    }
+                } else {
+                    console.log('No hay datos guardados en localStorage');
+                }
+                // Cargar escaneados e historial si existen
+                const escaneados = localStorage.getItem('manifiestos_escaneados');
+                if (escaneados) {
+                    try { manifiestosEscaneados = JSON.parse(escaneados) || {}; } catch {}
+                }
+                const hist = localStorage.getItem('historial_qr');
+                if (hist) {
+                    try {
+                        historial = JSON.parse(hist) || [];
+                        historialSet = new Set(historial.map(h => h.key));
+                        renderHistorial();
+                    } catch {}
+                }
+            } catch (error) {
+                console.error('Error cargando datos:', error);
+                carpetas = [];
+            }
+        }
+
+        function agregarCarpeta() {
+            const nombre = prompt('Ingresa el nombre de la nueva carpeta:');
+            if (!nombre || nombre.trim() === '') {
+                mostrarMensaje('Nombre de carpeta inválido.', 'error');
+                return;
+            }
+
+            const nuevaCarpeta = {
+                id: Date.now(),
+                nombre: nombre.trim(),
+                fecha: new Date().toLocaleString(),
+                manifiestos: [],
+                modoEliminar: false
+            };
+
+            carpetas.push(nuevaCarpeta);
+            guardarDatos(); // Guardar en localStorage
+            actualizarCarpetas();
+            
+            if (carpetas.length > 0) {
+                document.getElementById('eliminarCarpeta').disabled = false;
+            }
+            
+            mostrarMensaje(`Carpeta "${nombre}" creada correctamente.`, 'success');
+        }
+
+        function eliminarCarpeta() {
+            if (carpetas.length === 0) {
+                mostrarMensaje('No hay carpetas para eliminar.', 'error');
+                return;
+            }
+
+            modoEliminarCarpetas = !modoEliminarCarpetas;
+            
+            if (modoEliminarCarpetas) {
+                document.getElementById('eliminarCarpeta').innerHTML = '✅ Confirmar Eliminación';
+                mostrarMensaje('Selecciona las carpetas que deseas eliminar y presiona "Confirmar Eliminación".', 'info');
+            } else {
+                eliminarCarpetasSeleccionadas();
+            }
+            
+            actualizarCarpetas();
+        }
+
+        function agregarManifiesto(carpetaId) {
+            console.log('Función agregarManifiesto llamada con carpetaId:', carpetaId);
+            carpetaActiva = carpetaId;
+            console.log('carpetaActiva establecida como:', carpetaActiva);
+            
+            const carpeta = carpetas.find(c => c.id === carpetaId);
+            if (carpeta) {
+                console.log('Carpeta encontrada:', carpeta.nombre);
+                
+                // Preguntar si quiere cambiar el nombre del archivo
+                const cambiarNombre = confirm('¿Deseas modificar el nombre del manifiesto después de seleccionar el archivo?');
+                carpeta.cambiarNombreManifiesto = cambiarNombre;
+                
+                document.getElementById('fileInput').click();
+            } else {
+                console.error('No se encontró la carpeta con ID:', carpetaId);
+                mostrarMensaje('Error: Carpeta no encontrada.', 'error');
+            }
+        }
+
+        function eliminarManifiesto(carpetaId) {
+            const carpeta = carpetas.find(c => c.id === carpetaId);
+            if (!carpeta || carpeta.manifiestos.length === 0) {
+                mostrarMensaje('No hay manifiestos para eliminar en esta carpeta.', 'error');
+                return;
+            }
+
+            // Cambiar el estado de eliminación para esta carpeta específica
+            if (!carpeta.modoEliminar) {
+                carpeta.modoEliminar = true;
+                // Asegurar que la carpeta esté expandida
+                const contenido = document.getElementById(`carpeta-${carpetaId}`);
+                if (contenido && !contenido.classList.contains('expandida')) {
+                    contenido.classList.add('expandida');
+                }
+                mostrarMensaje('Selecciona los manifiestos que deseas eliminar y presiona "Confirmar Eliminación".', 'info');
+            } else {
+                carpeta.modoEliminar = false;
+            }
+            
+            // Solo actualizar esta carpeta específica en lugar de todas
+            actualizarCarpetaEspecifica(carpetaId);
+        }
+
+        function handleFileUpload(event) {
+            const file = event.target.files[0];
+            if (!file) {
+                mostrarMensaje('No se seleccionó ningún archivo.', 'error');
+                return;
+            }
+            
+            if (!carpetaActiva) {
+                mostrarMensaje('Error: No se ha seleccionado una carpeta. Intenta de nuevo.', 'error');
+                return;
+            }
+
+            console.log('Procesando archivo:', file.name, 'para carpeta ID:', carpetaActiva);
+            const carpetaIdSeleccionada = carpetaActiva;
+            const carpeta = carpetas.find(c => c.id === carpetaIdSeleccionada);
+
+            const reader = new FileReader();
+            
+            reader.onload = function(e) {
+                try {
+                    const data = new Uint8Array(e.target.result);
+                    const workbook = XLSX.read(data, { type: 'array' });
+                    const sheetName = workbook.SheetNames[0];
+                    const worksheet = workbook.Sheets[sheetName];
+                    
+                    // Leer como array de arrays para acceder por posición de columna
+                    const excelData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+                    
+                    if (excelData.length > 1) {
+                        // Saltar la primera fila (encabezados) y procesar los datos
+                        const datosFiltrados = excelData.slice(1).map(row => {
+                            // Columna A=0 (RECIBO), B=1 (AGENTE), C=2 (CONSIGNATARIO), D=3 (PIEZAS), F=5 (DESTINO)
+                            const recibo = row[0] ? String(row[0]).trim() : '';
+                            const agente = row[1] ? String(row[1]).trim() : '';
+                            const consignatario = row[2] ? String(row[2]).trim() : '';
+                            const piezas = row[3] ? parseInt(row[3]) : 0;
+                            const destino = row[5] ? String(row[5]).trim() : '';
+                            
+                            return {
+                                RECIBO: recibo,
+                                AGENTE: agente,
+                                CONSIGNATARIO: consignatario,
+                                PIEZAS: isNaN(piezas) ? 0 : piezas,
+                                DESTINO: destino
+                            };
+                        }).filter(row => row.RECIBO && row.RECIBO !== ''); // Solo incluir filas con RECIBO válido
+                        
+                        if (datosFiltrados.length === 0) {
+                            mostrarMensaje('El archivo no contiene datos válidos en las columnas A, B, C, D, F.', 'error');
+                            event.target.value = '';
+                            carpetaActiva = null;
+                            return;
+                        }
+                        
+                        let nombreManifiesto = file.name;
+                        
+                        // Preguntar si quiere cambiar el nombre
+                        if (carpeta && carpeta.cambiarNombreManifiesto) {
+                            const nuevoNombre = prompt('Ingresa el nombre para este manifiesto:', file.name);
+                            if (nuevoNombre && nuevoNombre.trim() !== '') {
+                                nombreManifiesto = nuevoNombre.trim();
+                            }
+                        }
+                        
+                        const nuevoManifiesto = {
+                            id: Date.now(),
+                            nombre: nombreManifiesto,
+                            fecha: new Date().toLocaleString(),
+                            registros: datosFiltrados.length,
+                            datos: datosFiltrados
+                        };
+                        
+                        if (carpeta) {
+                            carpeta.manifiestos.push(nuevoManifiesto);
+                            delete carpeta.cambiarNombreManifiesto; // Limpiar flag temporal
+                            guardarDatos();
+                            actualizarCarpetas();
+                            mostrarMensaje(`Manifiesto "${nombreManifiesto}" agregado a "${carpeta.nombre}". ${datosFiltrados.length} registros cargados.`, 'success');
+                            console.log('Manifiesto agregado exitosamente a carpeta:', carpeta.nombre);
+                        } else {
+                            mostrarMensaje('Error: No se encontró la carpeta seleccionada.', 'error');
+                        }
+                    } else {
+                        mostrarMensaje('El archivo no contiene datos válidos.', 'error');
+                    }
+                } catch (error) {
+                    mostrarMensaje('Error al leer el archivo: ' + error.message, 'error');
+                    console.error('Error procesando archivo:', error);
+                }
+                
+                event.target.value = '';
+                carpetaActiva = null;
+            };
+            
+            reader.readAsArrayBuffer(file);
+        }
+
+        function mostrarDatosTabla(datos) {
+            const tableContent = document.getElementById('tableContent');
+            const dataTable = document.getElementById('dataTable');
+            
+            if (!datos || datos.length === 0) {
+                dataTable.style.display = 'none';
+                return;
+            }
+            
+            dataTable.style.display = 'block';
+            
+            let html = '';
+            datos.slice(0, 10).forEach((row, index) => {
+                html += `<div class="table-row">
+                    <strong>Registro ${index + 1}:</strong> ${JSON.stringify(row)}
+                </div>`;
+            });
+            
+            if (datos.length > 10) {
+                html += `<div class="table-row"><em>... y ${datos.length - 10} registros más</em></div>`;
+            }
+            
+            tableContent.innerHTML = html;
+        }
+
+        function actualizarCarpetas() {
+            const container = document.getElementById('carpetasContainer');
+            
+            if (carpetas.length === 0) {
+                container.innerHTML = '<p style="text-align: center; color: rgba(255,255,255,0.7); padding: 2rem;">No hay carpetas creadas. Haz clic en "Agregar Carpeta" para crear una.</p>';
+                return;
+            }
+            
+            let html = '';
+            carpetas.forEach(carpeta => {
+                const checkbox = modoEliminarCarpetas ? `<input type="checkbox" class="carpeta-checkbox" data-id="${carpeta.id}" onclick="event.stopPropagation();">` : '';
+                const iconoExpandir = '📁';
+                const onclickHandler = modoEliminarCarpetas ? '' : `onclick="toggleCarpeta(${carpeta.id})"`;
+                
+                html += `
+                    <div class="carpeta-item" data-id="${carpeta.id}">
+                        <div class="carpeta-header" ${onclickHandler}>
+                            <div class="carpeta-nombre">
+                                ${checkbox}
+                                ${iconoExpandir} ${carpeta.nombre}
+                                <span style="font-size: 0.8rem; color: #bdc3c7; margin-left: 10px;">(${carpeta.manifiestos.length} manifiestos)</span>
+                            </div>
+                            <div style="font-size: 0.9rem; color: #bdc3c7;">
+                                📅 ${carpeta.fecha}
+                            </div>
+                        </div>
+                        <div class="carpeta-contenido" id="carpeta-${carpeta.id}">
+                            <div class="carpeta-controls">
+                                <button class="action-button" onclick="event.stopPropagation(); agregarManifiesto(${carpeta.id})" ${carpeta.modoEliminar ? 'disabled' : ''}>
+                                    📄 Agregar Manifiesto
+                                </button>
+                                <button class="action-button" onclick="event.stopPropagation(); eliminarManifiesto(${carpeta.id})" ${carpeta.manifiestos.length === 0 ? 'disabled' : ''}>
+                                    ${carpeta.modoEliminar ? '🔄 Modo Eliminación' : '🗑️ Eliminar Manifiesto'}
+                                </button>
+                                <button class="action-button" onclick="event.stopPropagation(); revisarFaltantesCarpeta(${carpeta.id})" ${carpeta.manifiestos.length === 0 ? 'disabled' : ''}>
+                                    🔍 Revisar Faltantes
+                                </button>
+                            </div>
+                            <div class="carpeta-manifiestos">
+                                ${generarListaManifiestos(carpeta)}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            container.innerHTML = html;
+        }
+
+        function actualizarCarpetaEspecifica(carpetaId) {
+            const carpeta = carpetas.find(c => c.id === carpetaId);
+            if (!carpeta) return;
+
+            const carpetaElement = document.querySelector(`[data-id="${carpetaId}"]`);
+            if (!carpetaElement) return;
+
+            // Solo actualizar el contenido de manifiestos de esta carpeta
+            const manifestosContainer = carpetaElement.querySelector('.carpeta-manifiestos');
+            if (manifestosContainer) {
+                manifestosContainer.innerHTML = generarListaManifiestos(carpeta);
+            }
+
+            // Actualizar el contador en el header
+            const contadorElement = carpetaElement.querySelector('.carpeta-nombre span');
+            if (contadorElement) {
+                contadorElement.textContent = `(${carpeta.manifiestos.length} manifiestos)`;
+            }
+        }
+
+        function generarListaManifiestos(carpeta) {
+            if (carpeta.manifiestos.length === 0) {
+                return '<p style="text-align: center; color: rgba(255,255,255,0.5);">No hay manifiestos en esta carpeta.</p>';
+            }
+            
+            let html = '<h4 style="color: #ecf0f1; margin-bottom: 1rem;">Manifiestos:</h4>';
+            carpeta.manifiestos.forEach(manifiesto => {
+                const checkboxEliminar = carpeta.modoEliminar ? `<input type="checkbox" class="manifiesto-checkbox" data-id="${manifiesto.id}" data-carpeta="${carpeta.id}" style="margin-right: 10px;" onclick="event.stopPropagation();">` : '';
+                const checkboxRevisar = carpeta.modoRevisar ? `<input type="checkbox" class="manifiesto-revisar-checkbox" data-id="${manifiesto.id}" data-carpeta="${carpeta.id}" style="margin-right: 10px;" onclick="event.stopPropagation();">` : '';
+                const checkbox = checkboxEliminar || checkboxRevisar;
+                const cursorStyle = (carpeta.modoEliminar || carpeta.modoRevisar) ? '' : 'cursor: pointer;';
+                const onclickHandler = (carpeta.modoEliminar || carpeta.modoRevisar) ? '' : `onclick="toggleManifiesto(${manifiesto.id})"`;
+                
+                html += `
+                    <div class="manifiesto-item" style="display: block; padding: 1.5rem;">
+                        <div style="display: flex; align-items: center; margin-bottom: 1rem; ${cursorStyle}" ${onclickHandler}>
+                            ${checkbox}
+                            <div>
+                                <strong style="font-size: 1.1rem; color: #ffffff;">${manifiesto.nombre}</strong><br>
+                                <small style="color: #ecf0f1;">📅 ${manifiesto.fecha} | 📊 ${manifiesto.registros} registros</small>
+                            </div>
+                        </div>
+                        <div id="manifiesto-detalle-${manifiesto.id}" style="display: none;">
+                            ${generarTablaManifiesto(manifiesto)}
+                            ${manifiesto.enRevision ? `<div id="faltantes-${manifiesto.id}" class="faltantes-section"></div>` : ''}
+                        </div>
+                    </div>
+                `;
+            });
+            
+            if (carpeta.modoEliminar) {
+                html += `
+                    <div style="text-align: center; margin-top: 1rem;">
+                        <button class="action-button" onclick="confirmarEliminacionManifiestos(${carpeta.id})">
+                            ✅ Confirmar Eliminación
+                        </button>
+                        <button class="action-button" onclick="cancelarEliminacionManifiestos(${carpeta.id})" style="background: rgba(231, 76, 60, 0.8);">
+                            ❌ Cancelar
+                        </button>
+                    </div>
+                `;
+            }
+            if (carpeta.modoRevisar) {
+                html += `
+                    <div style="text-align: center; margin-top: 1rem;">
+                        <button class="action-button" onclick="confirmarRevisionFaltantes(${carpeta.id})">
+                            ✅ Confirmar Revisión
+                        </button>
+                        <button class="action-button" onclick="cancelarRevisionFaltantes(${carpeta.id})" style="background: rgba(231, 76, 60, 0.8);">
+                            ❌ Cancelar
+                        </button>
+                    </div>
+                `;
+            }
+            
+            return html;
+        }
+
+        function generarTablaManifiesto(manifiesto) {
+            if (!manifiesto.datos || manifiesto.datos.length === 0) {
+                return '<p style="color: rgba(255,255,255,0.5);">No hay datos para mostrar.</p>';
+            }
+            
+            // Verificar si se deben mostrar todos los registros
+            const mostrarTodos = !!mostrarTodosRegistros[manifiesto.id];
+            const datosLimitados = mostrarTodos ? manifiesto.datos : manifiesto.datos.slice(0, 20);
+            const hayMas = !mostrarTodos && manifiesto.datos.length > 20;
+
+            const filas = datosLimitados.map(row => {
+                const piezas = parseInt(row.PIEZAS) || 0;
+                const key = `${manifiesto.id}_${String(row.RECIBO).trim()}`;
+                const showAll = !!mostrarTodasPiezas[key];
+                const toggleBtn = piezas > 50
+                  ? `<button class="action-button" style="padding: 0.3rem 0.6rem; font-size: 0.8rem; float: right;" onclick="toggleMostrarTodas(${manifiesto.id}, '${String(row.RECIBO).replace(/'/g, "\'")}')">${showAll ? 'Mostrar 50' : `Mostrar todos (${piezas})`}</button>`
+                  : '';
+                return `
+                    <tr>
+                        <td>${row.RECIBO} ${toggleBtn}</td>
+                        <td>${row.AGENTE}</td>
+                        <td>${row.CONSIGNATARIO}</td>
+                        <td>${piezas}</td>
+                        <td>${row.DESTINO}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="5">
+                            <div class="cuadros-piezas">
+                                ${generarCuadrosPiezas(manifiesto.id, row.RECIBO, piezas, showAll)}
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+            
+            const mensajeMas = hayMas ? `<tr><td colspan="5" style="text-align: center; font-style: italic; color: #bdc3c7;">... y ${manifiesto.datos.length - 20} registros más <button class="action-button" style="padding: 0.3rem 0.6rem; font-size: 0.8rem; margin-left: 10px;" onclick="toggleMostrarTodosRegistros(${manifiesto.id})">Ver todos</button></td></tr>` : '';
+            const botonMenos = mostrarTodos && manifiesto.datos.length > 20 ? `<tr><td colspan="5" style="text-align: center; padding: 10px;"><button class="action-button" style="padding: 0.5rem 1rem; font-size: 0.9rem;" onclick="toggleMostrarTodosRegistros(${manifiesto.id})">Mostrar solo 20 registros</button></td></tr>` : '';
+
+            return `
+                <div class="manifiesto-detalle">
+                    <table class="tabla-manifiestos">
+                        <thead>
+                            <tr>
+                                <th>RECIBO</th>
+                                <th>AGENTE</th>
+                                <th>CONSIGNATARIO</th>
+                                <th>PIEZAS</th>
+                                <th>DESTINO</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${filas}
+                            ${mensajeMas}
+                            ${botonMenos}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+        }
+
+        function generarCuadrosPiezas(manifestoId, recibo, cantidad, showAll = false) {
+            const limite = (!showAll && cantidad > 50) ? 50 : cantidad;
+            const aviso = (!showAll && cantidad > 50)
+                ? `<div style="width: 100%; color: #bdc3c7; font-size: 0.85rem;">Mostrando 50 de ${cantidad} piezas</div>`
+                : '';
+            const cuadros = Array.from({length: limite}, (_, i) => {
+                const key = `${manifestoId}_${recibo}_${i + 1}`;
+                const escaneado = manifiestosEscaneados[key] ? 'escaneado' : '';
+                return `<div class="cuadro-pieza ${escaneado}" data-key="${key}">${i + 1}</div>`;
+            }).join('');
+            return aviso + cuadros;
+        }
+
+        function toggleMostrarTodas(manifiestoId, recibo) {
+            const key = `${manifiestoId}_${String(recibo).trim()}`;
+            mostrarTodasPiezas[key] = !mostrarTodasPiezas[key];
+            // Re-renderizar solo el detalle del manifiesto
+            let targetManifiesto = null;
+            for (const carpeta of carpetas) {
+                targetManifiesto = carpeta.manifiestos.find(m => m.id === manifiestoId);
+                if (targetManifiesto) break;
+            }
+            if (!targetManifiesto) return;
+            const cont = document.getElementById(`manifiesto-detalle-${manifiestoId}`);
+            if (cont) cont.innerHTML = generarTablaManifiesto(targetManifiesto);
+        }
+
+        function toggleMostrarTodosRegistros(manifiestoId) {
+            mostrarTodosRegistros[manifiestoId] = !mostrarTodosRegistros[manifiestoId];
+            // Re-renderizar solo el detalle del manifiesto
+            let targetManifiesto = null;
+            for (const carpeta of carpetas) {
+                targetManifiesto = carpeta.manifiestos.find(m => m.id === manifiestoId);
+                if (targetManifiesto) break;
+            }
+            if (!targetManifiesto) return;
+            const cont = document.getElementById(`manifiesto-detalle-${manifiestoId}`);
+            if (cont) cont.innerHTML = generarTablaManifiesto(targetManifiesto);
+        }
+
+        function toggleManifiesto(manifestoId) {
+            const detalle = document.getElementById(`manifiesto-detalle-${manifestoId}`);
+            if (detalle) {
+                if (detalle.style.display === 'none') {
+                    detalle.style.display = 'block';
+                } else {
+                    detalle.style.display = 'none';
+                }
+            }
+        }
+
+        function revisarFaltantesCarpeta(carpetaId) {
+            const carpeta = carpetas.find(c => c.id === carpetaId);
+            if (!carpeta || carpeta.manifiestos.length === 0) {
+                mostrarMensaje('No hay manifiestos para revisar en esta carpeta.', 'error');
+                return;
+            }
+            carpeta.modoRevisar = !carpeta.modoRevisar;
+            if (carpeta.modoRevisar) {
+                mostrarMensaje('Selecciona los manifiestos que deseas revisar y presiona "Confirmar Revisión".', 'info');
+                // Asegurar carpeta expandida
+                const contenido = document.getElementById(`carpeta-${carpetaId}`);
+                if (contenido && !contenido.classList.contains('expandida')) contenido.classList.add('expandida');
+            }
+            actualizarCarpetaEspecifica(carpetaId);
+        }
+
+        function cancelarRevisionFaltantes(carpetaId) {
+            const carpeta = carpetas.find(c => c.id === carpetaId);
+            if (!carpeta) return;
+            carpeta.modoRevisar = false;
+            actualizarCarpetaEspecifica(carpetaId);
+            mostrarMensaje('Revisión cancelada.', 'info');
+        }
+
+        function confirmarRevisionFaltantes(carpetaId) {
+            const carpeta = carpetas.find(c => c.id === carpetaId);
+            if (!carpeta) return;
+            const seleccionados = Array.from(document.querySelectorAll(`.manifiesto-revisar-checkbox[data-carpeta="${carpetaId}"]:checked`)).map(cb => parseInt(cb.dataset.id));
+            if (seleccionados.length === 0) {
+                mostrarMensaje('Selecciona al menos un manifiesto para revisar.', 'error');
+                return;
+            }
+            carpeta.manifiestos.forEach(m => {
+                if (seleccionados.includes(m.id)) {
+                    m.enRevision = true;
+                }
+            });
+            carpeta.modoRevisar = false;
+            guardarDatos();
+            actualizarCarpetaEspecifica(carpetaId);
+            // Render inicial de faltantes para los seleccionados
+            carpeta.manifiestos.forEach(m => {
+                if (m.enRevision) renderFaltantes(m.id);
+            });
+            mostrarMensaje('Se habilitó la lista de Faltantes para los manifiestos seleccionados.', 'success');
+        }
+
+        function calcularFaltantes(manifiesto) {
+            const faltantes = [];
+            manifiesto.datos.forEach(row => {
+                const recibo = String(row.RECIBO).trim();
+                const piezas = parseInt(row.PIEZAS) || 0;
+                if (!recibo || piezas <= 0) return;
+                const noMarcadas = [];
+                for (let i = 1; i <= piezas; i++) {
+                    const key = `${manifiesto.id}_${recibo}_${i}`;
+                    if (!manifiestosEscaneados[key]) noMarcadas.push(i);
+                }
+                if (noMarcadas.length > 0) {
+                    faltantes.push({ recibo, piezas, noMarcadas });
+                }
+            });
+            return faltantes;
+        }
+
+        function renderFaltantes(manifiestoId) {
+            // Buscar manifiesto
+            let target = null;
+            for (const carpeta of carpetas) {
+                target = carpeta.manifiestos.find(m => m.id === manifiestoId);
+                if (target) break;
+            }
+            if (!target || !target.enRevision) return;
+            const cont = document.getElementById(`faltantes-${manifiestoId}`);
+            if (!cont) return;
+            const data = calcularFaltantes(target);
+            if (data.length === 0) {
+                cont.innerHTML = '<div class="faltantes-title">Faltantes</div><div class="faltantes-item">Todo completo ✅</div>';
+                return;
+            }
+            const html = [
+                '<div class="faltantes-title">Faltantes</div>',
+                ...data.map(item => `<div class="faltantes-item">Recibo ${item.recibo}: faltan ${item.noMarcadas.length} pieza(s) [${item.noMarcadas.join(', ')}] de ${item.piezas}</div>`)
+            ].join('');
+            cont.innerHTML = html;
+        }
+
+        function toggleCarpeta(carpetaId) {
+            const contenido = document.getElementById(`carpeta-${carpetaId}`);
+            if (contenido.classList.contains('expandida')) {
+                contenido.classList.remove('expandida');
+            } else {
+                contenido.classList.add('expandida');
+            }
+        }
+
+        function eliminarCarpetasSeleccionadas() {
+            const checkboxes = document.querySelectorAll('.carpeta-checkbox:checked');
+            
+            if (checkboxes.length === 0) {
+                mostrarMensaje('Selecciona al menos una carpeta para eliminar.', 'error');
+                return;
+            }
+            
+            const idsAEliminar = Array.from(checkboxes).map(cb => parseInt(cb.dataset.id));
+            
+            carpetas = carpetas.filter(c => !idsAEliminar.includes(c.id));
+            
+            modoEliminarCarpetas = false;
+            document.getElementById('eliminarCarpeta').innerHTML = '🗑️ Eliminar Carpeta';
+            
+            if (carpetas.length === 0) {
+                document.getElementById('eliminarCarpeta').disabled = true;
+                document.getElementById('dataTable').style.display = 'none';
+            }
+            
+            guardarDatos(); // Guardar en localStorage
+            actualizarCarpetas();
+            mostrarMensaje(`${checkboxes.length} carpeta(s) eliminada(s) correctamente.`, 'success');
+        }
+
+        function eliminarManifiestosSeleccionados(carpetaId) {
+            const checkboxes = document.querySelectorAll(`.manifiesto-checkbox[data-carpeta="${carpetaId}"]:checked`);
+            
+            if (checkboxes.length === 0) {
+                mostrarMensaje('Selecciona al menos un manifiesto para eliminar.', 'error');
+                return;
+            }
+            
+            const idsAEliminar = Array.from(checkboxes).map(cb => parseInt(cb.dataset.id));
+            const carpeta = carpetas.find(c => c.id === carpetaId);
+            
+            if (carpeta) {
+                const nombresEliminados = carpeta.manifiestos
+                    .filter(m => idsAEliminar.includes(m.id))
+                    .map(m => m.nombre);
+                
+                carpeta.manifiestos = carpeta.manifiestos.filter(m => !idsAEliminar.includes(m.id));
+                carpeta.modoEliminar = false;
+                
+                guardarDatos(); // Guardar en localStorage
+                actualizarCarpetaEspecifica(carpetaId); // Solo actualizar esta carpeta
+                mostrarMensaje(`${checkboxes.length} manifiesto(s) eliminado(s): ${nombresEliminados.join(', ')}`, 'success');
+            }
+        }
+
+        function confirmarEliminacionManifiestos(carpetaId) {
+            eliminarManifiestosSeleccionados(carpetaId);
+        }
+
+        function cancelarEliminacionManifiestos(carpetaId) {
+            const carpeta = carpetas.find(c => c.id === carpetaId);
+            if (carpeta) {
+                carpeta.modoEliminar = false;
+                actualizarCarpetaEspecifica(carpetaId);
+                mostrarMensaje('Eliminación cancelada.', 'info');
+            }
+        }
+
+
+
+        function mostrarMensaje(mensaje, tipo) {
+            const errorDiv = document.getElementById('mensajeErrorQR');
+            errorDiv.textContent = mensaje;
+            errorDiv.style.display = 'block';
+            
+            if (tipo === 'success') {
+                errorDiv.style.background = 'rgba(46, 204, 113, 0.2)';
+                errorDiv.style.borderColor = 'rgba(46, 204, 113, 0.3)';
+            } else if (tipo === 'info') {
+                errorDiv.style.background = 'rgba(52, 152, 219, 0.2)';
+                errorDiv.style.borderColor = 'rgba(52, 152, 219, 0.3)';
+            } else {
+                errorDiv.style.background = 'rgba(231, 76, 60, 0.2)';
+                errorDiv.style.borderColor = 'rgba(231, 76, 60, 0.3)';
+            }
+            
+            setTimeout(() => {
+                errorDiv.style.display = 'none';
+            }, 5000);
+        }
+
+        // Funciones del escáner QR
+        function mostrarEscaner() {
+            const qrSection = document.getElementById('qrScannerSection');
+            qrSection.style.display = 'block';
+            qrSection.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        async function iniciarCamara() {
+            try {
+                streamQR = await navigator.mediaDevices.getUserMedia({ 
+                    video: { 
+                        facingMode: 'environment',
+                        width: { ideal: 640 },
+                        height: { ideal: 480 }
+                    } 
+                });
+                
+                const video = document.getElementById('video');
+                const canvas = document.getElementById('canvas');
+                video.srcObject = streamQR;
+                
+                video.onloadedmetadata = () => {
+                    canvas.width = video.videoWidth;
+                    canvas.height = video.videoHeight;
+                    detectarQRLoop();
+                };
+                
+                document.getElementById('iniciarCamara').disabled = true;
+                document.getElementById('detenerCamara').disabled = false;
+                
+                // Verificar soporte de linterna
+                const track = streamQR.getVideoTracks()[0];
+                const capabilities = track.getCapabilities();
+                if (capabilities.torch) {
+                    document.getElementById('toggleFlashlight').disabled = false;
+                } else {
+                    document.getElementById('toggleFlashlight').disabled = true;
+                }
+                
+            } catch (error) {
+                console.error('Error al acceder a la cámara:', error);
+                mostrarMensaje('Error al acceder a la cámara. Verifica los permisos.', 'error');
+            }
+        }
+
+        function detenerCamara() {
+            if (streamQR) {
+                streamQR.getTracks().forEach(track => track.stop());
+                streamQR = null;
+            }
+            
+            document.getElementById('iniciarCamara').disabled = false;
+            document.getElementById('detenerCamara').disabled = true;
+            document.getElementById('toggleFlashlight').disabled = true;
+            flashlightOn = false;
+            document.getElementById('qrResult').textContent = 'Cámara detenida';
+        }
+
+        function toggleFlashlight() {
+            if (!streamQR) return;
+            
+            const track = streamQR.getVideoTracks()[0];
+            const capabilities = track.getCapabilities();
+            
+            if (capabilities.torch) {
+                flashlightOn = !flashlightOn;
+                track.applyConstraints({
+                    advanced: [{ torch: flashlightOn }]
+                }).then(() => {
+                    const btn = document.getElementById('toggleFlashlight');
+                    btn.textContent = flashlightOn ? '💡 Apagar Linterna' : '💡 Linterna';
+                }).catch(error => {
+                    console.error('Error al controlar la linterna:', error);
+                    mostrarMensaje('Error al controlar la linterna', 'error');
+                });
+            }
+        }
+
+        function detectarQRLoop() {
+            if (!streamQR || procesandoQR) {
+                setTimeout(detectarQRLoop, 100); // Reducir frecuencia
+                return;
+            }
+
+            try {
+                procesandoQR = true;
+                
+                const video = document.getElementById('video');
+                const canvas = document.getElementById('canvas');
+                const ctx = canvas.getContext('2d');
+                // Asegurar tamaño del canvas al del video
+                if (video.videoWidth && video.videoHeight) {
+                    if (canvas.width !== video.videoWidth) canvas.width = video.videoWidth;
+                    if (canvas.height !== video.videoHeight) canvas.height = video.videoHeight;
+                }
+                
+                if (video.readyState === video.HAVE_ENOUGH_DATA) {
+                    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+                    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                    const code = jsQR(imageData.data, imageData.width, imageData.height);
+
+                    if (code) {
+                        // Dibujar rectángulo rojo sobre el QR (método que funciona)
+                        ctx.beginPath();
+                        ctx.lineWidth = 4;
+                        ctx.strokeStyle = "#FF3B58";
+                        ctx.moveTo(code.location.topLeftCorner.x, code.location.topLeftCorner.y);
+                        ctx.lineTo(code.location.topRightCorner.x, code.location.topRightCorner.y);
+                        ctx.lineTo(code.location.bottomRightCorner.x, code.location.bottomRightCorner.y);
+                        ctx.lineTo(code.location.bottomLeftCorner.x, code.location.bottomLeftCorner.y);
+                        ctx.closePath();
+                        ctx.stroke();
+                        // Evitar procesar el mismo código repetidamente
+                        const ahora = Date.now();
+                        if (code.data !== ultimoCodigoProcesado || (ahora - tiempoUltimoProcesamiento) > 2000) {
+                            ultimoCodigoProcesado = code.data;
+                            tiempoUltimoProcesamiento = ahora;
+                            procesarCodigoQR(code.data);
+                        }
+                    } else {
+                        document.getElementById('qrResult').textContent = 'Buscando código QR...';
+                        // Limpiar canvas si no hay QR
+                        ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    }
+                }
+                
+                procesandoQR = false;
+                setTimeout(detectarQRLoop, 100); // Reducir frecuencia
+                
+            } catch (error) {
+                procesandoQR = false;
+                setTimeout(detectarQRLoop, 100);
+            }
+        }
+
+        function procesarCodigoQR(codigoCompleto) {
+            // Formato esperado: 404431-1/001-004:042
+            // Extraer número de recibo (antes del primer -)
+            const reciboMatch = codigoCompleto.match(/^(\d+)-/);
+            if (!reciboMatch) {
+                document.getElementById('qrResult').textContent = `Código detectado: ${codigoCompleto} (formato no válido)`;
+                return;
+            }
+            const numeroRecibo = reciboMatch[1]; // 404431
+            
+            // Extraer pieza actual y total (entre / y :)
+            const piezaMatch = codigoCompleto.match(/\/(\d+)-(\d+):/);
+            if (!piezaMatch) {
+                document.getElementById('qrResult').textContent = `Código detectado: ${codigoCompleto} (formato no válido)`;
+                return;
+            }
+            
+            const numeroPieza = parseInt(piezaMatch[1]); // 001
+            const totalPiezas = parseInt(piezaMatch[2]); // 004
+            
+            document.getElementById('qrResult').textContent = `Código detectado: Recibo ${numeroRecibo} - Pieza ${numeroPieza} de ${totalPiezas}`;
+            
+            // Buscar el recibo en TODAS las carpetas
+            let encontrado = false;
+            let carpetaEncontrada = null;
+            let manifestoEncontrado = null;
+            let rowEncontrada = null;
+            
+            carpetas.forEach(carpeta => {
+                if (encontrado) return; // Ya lo encontramos
+                
+                carpeta.manifiestos.forEach(manifiesto => {
+                    if (encontrado) return; // Ya lo encontramos
+                    
+                    manifiesto.datos.forEach(row => {
+                        if (encontrado) return; // Ya lo encontramos
+                        
+                        // Verificar si el recibo coincide y el total de piezas coincide
+                        if (String(row.RECIBO).trim() === numeroRecibo && parseInt(row.PIEZAS) === totalPiezas) {
+                            encontrado = true;
+                            carpetaEncontrada = carpeta;
+                            manifestoEncontrado = manifiesto;
+                            rowEncontrada = row;
+                        }
+                    });
+                });
+            });
+            
+            if (!encontrado) {
+                mostrarMensaje('NO ENCONTRADO', 'error');
+                document.getElementById('qrResult').textContent = 'NO ENCONTRADO';
+                addHistorialEntry(codigoCompleto, 'NO ENCONTRADO');
+                return;
+            }
+            
+            // Generar la clave para el escaneado
+            const key = `${manifestoEncontrado.id}_${rowEncontrada.RECIBO}_${numeroPieza}`;
+            
+            // Verificar si ya fue escaneado
+            if (manifiestosEscaneados[key]) {
+                const mensaje = `CARPETA = ${carpetaEncontrada.nombre} ${rowEncontrada.RECIBO} ${numeroPieza}/${totalPiezas} (PIEZA YA ESCANEADA)`;
+                mostrarMensaje(mensaje, 'error');
+                document.getElementById('qrResult').textContent = mensaje;
+                // NO agregar al historial si ya fue escaneado
+                // refrescar faltantes si está visible
+                renderFaltantes(manifestoEncontrado.id);
+                return;
+            }
+            
+            // Marcar como escaneado
+            manifiestosEscaneados[key] = true;
+            guardarEscaneados();
+            
+            // Actualizar la UI si el cuadro está visible
+            const cuadro = document.querySelector(`[data-key="${key}"]`);
+            if (cuadro) {
+                cuadro.classList.add('escaneado');
+            }
+            
+            // Mostrar mensaje de éxito
+            const mensaje = `CARPETA = ${carpetaEncontrada.nombre} ${rowEncontrada.RECIBO} ${numeroPieza}/${totalPiezas} (✓)`;
+            mostrarMensaje(mensaje, 'success');
+            document.getElementById('qrResult').textContent = mensaje;
+            // refrescar faltantes si está visible
+            renderFaltantes(manifestoEncontrado.id);
+            // historial
+            addHistorialEntry(codigoCompleto, mensaje);
+        }
+
+        function guardarEscaneados() {
+            try {
+                localStorage.setItem('manifiestos_escaneados', JSON.stringify(manifiestosEscaneados));
+            } catch (error) {
+                console.error('Error guardando escaneados:', error);
+            }
+        }
+
+        function addHistorialEntry(keyStr, descripcion) {
+            const entryKey = String(keyStr).trim();
+            // Solo agregar al historial si es un código nuevo (no duplicado)
+            if (historialSet.has(entryKey)) {
+                return; // No agregar duplicados
+            }
+            const ahora = new Date().toLocaleString();
+            const item = { key: entryKey, text: descripcion, fecha: ahora };
+            historial.unshift(item); // último primero
+            historialSet.add(entryKey);
+            try { localStorage.setItem('historial_qr', JSON.stringify(historial)); } catch {}
+            renderHistorial();
+        }
+
+        function renderHistorial() {
+            const list = document.getElementById('historialList');
+            if (!list) return;
+            list.innerHTML = historial.map(h => `
+                <div class="historial-item">
+                    <div><strong>${h.text}</strong></div>
+                    <div style="font-size: 0.85rem; color: #333;">${h.fecha}</div>
+                </div>
+            `).join('');
+        }
+
+        function limpiarHistorial() {
+            historial = [];
+            historialSet = new Set();
+            try { localStorage.removeItem('historial_qr'); } catch {}
+            renderHistorial();
+        }
+
+        function cargarEscaneados() {
+            try {
+                const datosGuardados = localStorage.getItem('manifiestos_escaneados');
+                if (datosGuardados) {
+                    manifiestosEscaneados = JSON.parse(datosGuardados);
+                }
+            } catch (error) {
+                console.error('Error cargando escaneados:', error);
+                manifiestosEscaneados = {};
+            }
+        }
+
+        // Limpiar recursos al salir
+        window.addEventListener('beforeunload', () => {
+            if (streamQR) {
+                streamQR.getTracks().forEach(track => track.stop());
+            }
+        });
+
+        // Inicializar las carpetas al cargar la página
+        window.onload = function() {
+            cargarDatos(); // Cargar datos desde localStorage
+            cargarEscaneados(); // Cargar escaneados
+            actualizarCarpetas();
+            
+            // Si viene con hash #qr-scanner, mostrar y desplazar al escáner
+            if (window.location.hash === '#qr-scanner') {
+                mostrarEscaner();
+                document.getElementById('qrScannerSection').scrollIntoView({ behavior: 'smooth' });
+                // Iniciar automáticamente la cámara después de un pequeño delay
+                setTimeout(() => {
+                    iniciarCamara();
+                }, 500);
+            }
+        };
